@@ -81,3 +81,10 @@ class Favorite(db.Model):
         ForeignKey("planet.id"),
         nullable=True
     )
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "people_id": self.people_id,
+            "planet_id": self.planet_id
+        }

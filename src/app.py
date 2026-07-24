@@ -117,6 +117,111 @@ def get_users():
     ), 200
 
 
+# Añadir un personaje a favoritos
+@app.route("/favorite/people/<int:people_id>", methods=["POST"])
+def add_people_favorite(people_id):
+
+    person = People.query.get(people_id)
+
+    if person is None:
+        return jsonify({
+            "msg": "Character not found"
+        }), 404
+
+    favorite = Favorite(
+        user_id=1,
+        people_id=people_id
+    )
+
+    db.session.add(favorite)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Favorite added successfully"
+    }), 200
+
+
+# Añadir un planeta a favoritos
+@app.route("/favorite/planet/<int:planet_id>", methods=["POST"])
+def add_planet_favorite(planet_id):
+
+    planet = Planet.query.get(planet_id)
+
+    if planet is None:
+        return jsonify({
+            "msg": "Planet not found"
+        }), 404
+
+    favorite = Favorite(
+        user_id=1,
+        planet_id=planet_id
+    )
+
+    db.session.add(favorite)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Favorite added successfully"
+    }), 200
+
+
+# Eliminar un personaje de favoritos
+@app.route("/favorite/people/<int:people_id>", methods=["DELETE"])
+def delete_people_favorite(people_id):
+
+    favorite = Favorite.query.filter_by(
+        people_id=people_id,
+        user_id=1
+    ).first()
+
+    if favorite is None:
+        return jsonify({
+            "msg": "Favorite not found"
+        }), 404
+
+    db.session.delete(favorite)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Favorite deleted successfully"
+    }), 200
+
+
+# Eliminar un planeta de favoritos
+@app.route("/favorite/planet/<int:planet_id>", methods=["DELETE"])
+def delete_planet_favorite(planet_id):
+
+    favorite = Favorite.query.filter_by(
+        planet_id=planet_id,
+        user_id=1
+    ).first()
+
+    if favorite is None:
+        return jsonify({
+            "msg": "Favorite not found"
+        }), 404
+
+    db.session.delete(favorite)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Favorite deleted successfully"
+    }), 200
+
+
+# Obtener todos los favoritos del usuario
+@app.route("/users/favorites", methods=["GET"])
+def get_user_favorites():
+
+    favorites = Favorite.query.filter_by(
+        user_id=1
+    ).all()
+
+    return jsonify(
+        [favorite.serialize() for favorite in favorites]
+    ), 200
+
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
